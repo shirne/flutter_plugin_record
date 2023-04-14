@@ -1,38 +1,37 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_plugin_record/flutter_plugin_record.dart';
-import 'package:flutter_plugin_record/utils/common_toast.dart';
 
+import '../flutter_plugin_record.dart';
+import '../utils/common_toast.dart';
 import 'custom_overlay.dart';
 
-typedef startRecord = Future Function();
-typedef stopRecord = Future Function();
+typedef StopRecordCallback = Function(String, double);
 
 class VoiceWidget extends StatefulWidget {
-  final Function? startRecord;
-  final Function? stopRecord;
+  final VoidCallback? onStartRecord;
+  final StopRecordCallback? onStopRecord;
   final double? height;
   final EdgeInsets? margin;
   final Decoration? decoration;
 
   /// startRecord 开始录制回调  stopRecord回调
-  const VoiceWidget(
-      {Key? key,
-      this.startRecord,
-      this.stopRecord,
-      this.height,
-      this.decoration,
-      this.margin})
-      : super(key: key);
+  const VoiceWidget({
+    Key? key,
+    this.onStartRecord,
+    this.onStopRecord,
+    this.height,
+    this.decoration,
+    this.margin,
+  }) : super(key: key);
 
   @override
-  _VoiceWidgetState createState() => _VoiceWidgetState();
+  State<VoiceWidget> createState() => _VoiceWidgetState();
 }
 
 class _VoiceWidgetState extends State<VoiceWidget> {
   // 倒计时总时长
-  int _countTotal = 12;
+  final _countTotal = 12;
   double starty = 0.0;
   double offset = 0.0;
   bool isUp = false;
@@ -50,16 +49,16 @@ class _VoiceWidgetState extends State<VoiceWidget> {
   @override
   void initState() {
     super.initState();
-    recordPlugin = new FlutterPluginRecord();
+    recordPlugin = FlutterPluginRecord();
 
     _init();
 
     ///初始化方法的监听
     recordPlugin?.responseFromInit.listen((data) {
       if (data) {
-        print("初始化成功");
+        debugPrint("初始化成功");
       } else {
-        print("初始化失败");
+        debugPrint("初始化失败");
       }
     });
 
@@ -67,12 +66,11 @@ class _VoiceWidgetState extends State<VoiceWidget> {
     recordPlugin?.response.listen((data) {
       if (data.msg == "onStop") {
         ///结束录制时会返回录制文件的地址方便上传服务器
-        print("onStop  " + data.path!);
-        if (widget.stopRecord != null)
-          widget.stopRecord!(data.path, data.audioTimeLength);
+        debugPrint("onStop  ${data.path}");
+        widget.onStopRecord?.call(data.path!, data.audioTimeLength!);
       } else if (data.msg == "onStart") {
-        print("onStart --");
-        if (widget.startRecord != null) widget.startRecord!();
+        debugPrint("onStart --");
+        widget.onStartRecord?.call();
       }
     });
 
@@ -102,14 +100,14 @@ class _VoiceWidgetState extends State<VoiceWidget> {
         }
       });
 
-      print("振幅大小   " + voiceData.toString() + "  " + voiceIco);
+      debugPrint("振幅大小   $voiceData  $voiceIco");
     });
   }
 
   ///显示录音悬浮布局
   buildOverLayView(BuildContext context) {
     if (overlayEntry == null) {
-      overlayEntry = new OverlayEntry(builder: (content) {
+      overlayEntry = OverlayEntry(builder: (content) {
         return CustomOverlay(
           icon: Column(
             children: <Widget>[
@@ -121,36 +119,33 @@ class _VoiceWidgetState extends State<VoiceWidget> {
                           padding: const EdgeInsets.only(bottom: 15.0),
                           child: Text(
                             (_countTotal - _count).toString(),
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 70.0,
                               color: Colors.white,
                             ),
                           ),
                         ),
                       )
-                    : new Image.asset(
+                    : Image.asset(
                         voiceIco,
                         width: 100,
                         height: 100,
                         package: 'flutter_plugin_record',
                       ),
               ),
-              Container(
-//                      padding: const EdgeInsets.only(right: 20, left: 20, top: 0),
-                child: Text(
-                  toastShow,
-                  style: TextStyle(
-                    fontStyle: FontStyle.normal,
-                    color: Colors.white,
-                    fontSize: 14,
-                  ),
+              Text(
+                toastShow,
+                style: const TextStyle(
+                  fontStyle: FontStyle.normal,
+                  color: Colors.white,
+                  fontSize: 14,
                 ),
               )
             ],
           ),
         );
       });
-      Overlay.of(context)!.insert(overlayEntry!);
+      Overlay.of(context).insert(overlayEntry!);
     }
   }
 
@@ -172,7 +167,7 @@ class _VoiceWidgetState extends State<VoiceWidget> {
         CommonToast.showView(
             context: context,
             msg: '说话时间太短',
-            icon: Text(
+            icon: const Text(
               '!',
               style: TextStyle(fontSize: 80, color: Colors.white),
             ));
@@ -194,9 +189,9 @@ class _VoiceWidgetState extends State<VoiceWidget> {
     }
 
     if (isUp) {
-      print("取消发送");
+      debugPrint("取消发送");
     } else {
-      print("进行发送");
+      debugPrint("进行发送");
     }
   }
 
@@ -231,39 +226,37 @@ class _VoiceWidgetState extends State<VoiceWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: GestureDetector(
-        onLongPressStart: (details) {
-          starty = details.globalPosition.dy;
-          _timer = Timer.periodic(Duration(milliseconds: 1000), (t) {
-            _count++;
-            print('_count is 👉 $_count');
-            if (_count == _countTotal) {
-              hideVoiceView();
-            }
-          });
-          showVoiceView();
-        },
-        onLongPressEnd: (details) {
-          hideVoiceView();
-        },
-        onLongPressMoveUpdate: (details) {
-          offset = details.globalPosition.dy;
-          moveVoiceView();
-        },
-        child: Container(
-          height: widget.height ?? 60,
-          // color: Colors.blue,
-          decoration: widget.decoration ??
-              BoxDecoration(
-                borderRadius: new BorderRadius.circular(6.0),
-                border: Border.all(width: 1.0, color: Colors.grey.shade200),
-              ),
-          margin: widget.margin ?? EdgeInsets.fromLTRB(50, 0, 50, 20),
-          child: Center(
-            child: Text(
-              textShow,
+    return GestureDetector(
+      onLongPressStart: (details) {
+        starty = details.globalPosition.dy;
+        _timer = Timer.periodic(const Duration(milliseconds: 1000), (t) {
+          _count++;
+          debugPrint('_count is 👉 $_count');
+          if (_count == _countTotal) {
+            hideVoiceView();
+          }
+        });
+        showVoiceView();
+      },
+      onLongPressEnd: (details) {
+        hideVoiceView();
+      },
+      onLongPressMoveUpdate: (details) {
+        offset = details.globalPosition.dy;
+        moveVoiceView();
+      },
+      child: Container(
+        height: widget.height ?? 60,
+        // color: Colors.blue,
+        decoration: widget.decoration ??
+            BoxDecoration(
+              borderRadius: BorderRadius.circular(6.0),
+              border: Border.all(width: 1.0, color: Colors.grey.shade200),
             ),
+        margin: widget.margin ?? const EdgeInsets.fromLTRB(50, 0, 50, 20),
+        child: Center(
+          child: Text(
+            textShow,
           ),
         ),
       ),

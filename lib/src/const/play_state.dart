@@ -3,5 +3,4 @@ class PlayState {
   String playPath;
 
   PlayState(this.playState, this.playPath);
-
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_plugin_record/index.dart';
+import 'package:flutter_plugin_record/flutter_plugin_record.dart';
 
 class WeChatRecordScreen extends StatefulWidget {
   @override
@@ -8,7 +8,7 @@ class WeChatRecordScreen extends StatefulWidget {
 
 class _WeChatRecordScreenState extends State<WeChatRecordScreen> {
   String toastShow = "悬浮框";
-  OverlayEntry overlayEntry;
+  OverlayEntry? overlayEntry;
 
   showView(BuildContext context) {
     if (overlayEntry == null) {
@@ -48,7 +48,7 @@ class _WeChatRecordScreenState extends State<WeChatRecordScreen> {
           ),
         );
       });
-      Overlay.of(context).insert(overlayEntry);
+      Overlay.of(context).insert(overlayEntry!);
     }
   }
 
@@ -71,32 +71,35 @@ class _WeChatRecordScreenState extends State<WeChatRecordScreen> {
       body: Container(
         child: Column(
           children: <Widget>[
-            new FlatButton(
-                onPressed: () {
-                  showView(context);
-                },
-                child: new Text("悬浮组件")),
-            new FlatButton(
-                onPressed: () {
+            TextButton(
+              onPressed: () {
+                showView(context);
+              },
+              child: new Text("悬浮组件"),
+            ),
+            TextButton(
+              onPressed: () {
+                if (overlayEntry != null) {
+                  overlayEntry?.remove();
+                  overlayEntry = null;
+                }
+              },
+              child: new Text("隐藏悬浮组件"),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  toastShow = "111";
                   if (overlayEntry != null) {
-                    overlayEntry.remove();
-                    overlayEntry = null;
+                    overlayEntry?.markNeedsBuild();
                   }
-                },
-                child: new Text("隐藏悬浮组件")),
-            new FlatButton(
-                onPressed: () {
-                  setState(() {
-                    toastShow = "111";
-                    if (overlayEntry != null) {
-                      overlayEntry.markNeedsBuild();
-                    }
-                  });
-                },
-                child: new Text("悬浮窗状态更新")),
-            new VoiceWidget(
-              startRecord: startRecord,
-              stopRecord: stopRecord,
+                });
+              },
+              child: new Text("悬浮窗状态更新"),
+            ),
+            VoiceWidget(
+              onStartRecord: startRecord,
+              onStopRecord: stopRecord,
               // 加入定制化Container的相关属性
               height: 40.0,
             ),
