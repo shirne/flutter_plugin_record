@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_plugin_record/flutter_plugin_record.dart';
 
 class WeChatRecordScreen extends StatefulWidget {
+  const WeChatRecordScreen({Key? key}) : super(key: key);
+
   @override
-  _WeChatRecordScreenState createState() => _WeChatRecordScreenState();
+  State<WeChatRecordScreen> createState() => _WeChatRecordScreenState();
 }
 
 class _WeChatRecordScreenState extends State<WeChatRecordScreen> {
@@ -12,7 +14,7 @@ class _WeChatRecordScreenState extends State<WeChatRecordScreen> {
 
   showView(BuildContext context) {
     if (overlayEntry == null) {
-      overlayEntry = new OverlayEntry(builder: (content) {
+      overlayEntry = OverlayEntry(builder: (content) {
         return Positioned(
           top: MediaQuery.of(context).size.height * 0.5 - 80,
           left: MediaQuery.of(context).size.width * 0.5 - 80,
@@ -23,21 +25,18 @@ class _WeChatRecordScreenState extends State<WeChatRecordScreen> {
                 child: Container(
                   width: 100,
                   height: 100,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Color(0xff77797A),
                     borderRadius: BorderRadius.all(Radius.circular(20.0)),
                   ),
                   child: Column(
                     children: <Widget>[
-                      Container(
-//                      padding: EdgeInsets.only(right: 20, left: 20, top: 0),
-                        child: Text(
-                          toastShow,
-                          style: TextStyle(
-                            fontStyle: FontStyle.normal,
-                            color: Colors.white,
-                            fontSize: 14,
-                          ),
+                      Text(
+                        toastShow,
+                        style: const TextStyle(
+                          fontStyle: FontStyle.normal,
+                          color: Colors.white,
+                          fontSize: 14,
                         ),
                       )
                     ],
@@ -53,58 +52,56 @@ class _WeChatRecordScreenState extends State<WeChatRecordScreen> {
   }
 
   startRecord() {
-    print("开始录制");
+    debugPrint("开始录制");
   }
 
   stopRecord(String path, double audioTimeLength) {
-    print("结束束录制");
-    print("音频文件位置" + path);
-    print("音频录制时长" + audioTimeLength.toString());
+    debugPrint("结束束录制");
+    debugPrint("音频文件位置$path");
+    debugPrint("音频录制时长$audioTimeLength");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("仿微信发送语音"),
+        title: const Text("仿微信发送语音"),
       ),
-      body: Container(
-        child: Column(
-          children: <Widget>[
-            TextButton(
-              onPressed: () {
-                showView(context);
-              },
-              child: new Text("悬浮组件"),
-            ),
-            TextButton(
-              onPressed: () {
+      body: Column(
+        children: <Widget>[
+          TextButton(
+            onPressed: () {
+              showView(context);
+            },
+            child: const Text("悬浮组件"),
+          ),
+          TextButton(
+            onPressed: () {
+              if (overlayEntry != null) {
+                overlayEntry?.remove();
+                overlayEntry = null;
+              }
+            },
+            child: const Text("隐藏悬浮组件"),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                toastShow = "111";
                 if (overlayEntry != null) {
-                  overlayEntry?.remove();
-                  overlayEntry = null;
+                  overlayEntry?.markNeedsBuild();
                 }
-              },
-              child: new Text("隐藏悬浮组件"),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  toastShow = "111";
-                  if (overlayEntry != null) {
-                    overlayEntry?.markNeedsBuild();
-                  }
-                });
-              },
-              child: new Text("悬浮窗状态更新"),
-            ),
-            VoiceWidget(
-              onStartRecord: startRecord,
-              onStopRecord: stopRecord,
-              // 加入定制化Container的相关属性
-              height: 40.0,
-            ),
-          ],
-        ),
+              });
+            },
+            child: const Text("悬浮窗状态更新"),
+          ),
+          VoiceWidget(
+            onStartRecord: startRecord,
+            onStopRecord: stopRecord,
+            // 加入定制化Container的相关属性
+            height: 40.0,
+          ),
+        ],
       ),
     );
   }

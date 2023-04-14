@@ -5,12 +5,14 @@ import 'package:flutter_plugin_record/flutter_plugin_record.dart';
 import 'package:path_provider/path_provider.dart';
 
 class RecordMp3Screen extends StatefulWidget {
+  const RecordMp3Screen({Key? key}) : super(key: key);
+
   @override
-  _RecordMp3ScreenState createState() => _RecordMp3ScreenState();
+  State<RecordMp3Screen> createState() => _RecordMp3ScreenState();
 }
 
 class _RecordMp3ScreenState extends State<RecordMp3Screen> {
-  FlutterPluginRecord recordPlugin = new FlutterPluginRecord();
+  FlutterPluginRecord recordPlugin = FlutterPluginRecord();
 
   String filePath = "";
 
@@ -21,9 +23,9 @@ class _RecordMp3ScreenState extends State<RecordMp3Screen> {
     ///初始化方法的监听
     recordPlugin.responseFromInit.listen((data) {
       if (data) {
-        print("初始化成功");
+        debugPrint("初始化成功");
       } else {
-        print("初始化失败");
+        debugPrint("初始化失败");
       }
     });
 
@@ -31,25 +33,25 @@ class _RecordMp3ScreenState extends State<RecordMp3Screen> {
     recordPlugin.response.listen((data) {
       if (data.msg == "onStop") {
         ///结束录制时会返回录制文件的地址方便上传服务器
-        print("onStop  文件路径${data.path}");
+        debugPrint("onStop  文件路径${data.path}");
         filePath = data.path!;
-        print("onStop  时长 " + data.audioTimeLength.toString());
+        debugPrint("onStop  时长 ${data.audioTimeLength}");
       } else if (data.msg == "onStart") {
-        print("onStart --");
+        debugPrint("onStart --");
       } else {
-        print("--${data.msg}");
+        debugPrint("--${data.msg}");
       }
     });
 
     ///录制过程监听录制的声音的大小 方便做语音动画显示图片的样式
     recordPlugin.responseFromAmplitude.listen((data) {
       var voiceData = double.parse(data.msg ?? '');
-      print("振幅大小   " + voiceData.toString());
+      debugPrint("振幅大小   $voiceData");
     });
 
     recordPlugin.responsePlayStateController.listen((data) {
-      print("播放路径   " + data.playPath);
-      print("播放状态   " + data.playState);
+      debugPrint("播放路径   ${data.playPath}");
+      debugPrint("播放状态   ${data.playState}");
     });
   }
 
@@ -63,43 +65,43 @@ class _RecordMp3ScreenState extends State<RecordMp3Screen> {
         child: Column(
           children: <Widget>[
             TextButton(
-              child: Text("初始化录制mp3"),
+              child: const Text("初始化录制mp3"),
               onPressed: () {
                 _initRecordMp3();
               },
             ),
             TextButton(
-              child: Text("开始录制"),
+              child: const Text("开始录制"),
               onPressed: () {
                 start();
               },
             ),
             TextButton(
-              child: Text("根据路径录制mp3文件"),
+              child: const Text("根据路径录制mp3文件"),
               onPressed: () {
                 _requestAppDocumentsDirectory();
               },
             ),
             TextButton(
-              child: Text("停止录制"),
+              child: const Text("停止录制"),
               onPressed: () {
                 stop();
               },
             ),
             TextButton(
-              child: Text("播放"),
+              child: const Text("播放"),
               onPressed: () {
                 play();
               },
             ),
             TextButton(
-              child: Text("播放本地指定路径录音文件"),
+              child: const Text("播放本地指定路径录音文件"),
               onPressed: () {
                 playByPath(filePath, "file");
               },
             ),
             TextButton(
-              child: Text("播放网络mp3文件"),
+              child: const Text("播放网络mp3文件"),
               onPressed: () {
                 playByPath(
                     "https://test-1259809289.cos.ap-nanjing.myqcloud.com/temp.mp3",
@@ -107,13 +109,13 @@ class _RecordMp3ScreenState extends State<RecordMp3Screen> {
               },
             ),
             TextButton(
-              child: Text("暂停|继续播放"),
+              child: const Text("暂停|继续播放"),
               onPressed: () {
                 pause();
               },
             ),
             TextButton(
-              child: Text("停止播放"),
+              child: const Text("停止播放"),
               onPressed: () {
                 stopPlay();
               },
@@ -145,9 +147,9 @@ class _RecordMp3ScreenState extends State<RecordMp3Screen> {
         // TODO  注意IOS 传递的Mp3路径一定是以 .MP3 结尾
         String wavPath = "";
         if (Platform.isIOS) {
-          wavPath = value.path + "/" + nowDataTimeStr + ".MP3";
+          wavPath = "${value.path}/$nowDataTimeStr.MP3";
         } else {
-          wavPath = value.path + "/" + nowDataTimeStr;
+          wavPath = "${value.path}/$nowDataTimeStr";
         }
         startByWavPath(wavPath);
       });

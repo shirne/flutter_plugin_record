@@ -5,34 +5,37 @@ import 'record_mp3_screen.dart';
 import 'record_screen.dart';
 import 'wechat_record_screen.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
       routes: {
-        "RecordScreen": (BuildContext context) => new RecordScreen(),
-        "RecordMp3Screen": (BuildContext context) => new RecordMp3Screen(),
-        "WeChatRecordScreen": (BuildContext context) => WeChatRecordScreen(),
+        "RecordScreen": (BuildContext context) => const RecordScreen(),
+        "RecordMp3Screen": (BuildContext context) => const RecordMp3Screen(),
+        "WeChatRecordScreen": (BuildContext context) =>
+            const WeChatRecordScreen(),
         "PathProviderScreen": (BuildContext context) =>
-            PathProviderScreen(title: ''),
+            const PathProviderScreen(title: ''),
       },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -43,34 +46,38 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("flutter版微信语音录制实现"),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("flutter版微信语音录制实现"),
       ),
-      body: new Center(
-        child: new Column(
+      body: Center(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            new TextButton(
-                onPressed: () {
-                  Navigator.pushNamed<dynamic>(context, "RecordScreen");
-                },
-                child: new Text("进入语音录制界面")),
-            new TextButton(
-                onPressed: () {
-                  Navigator.pushNamed<dynamic>(context, "RecordMp3Screen");
-                },
-                child: new Text("进入录制mp3模式")),
-            new TextButton(
-                onPressed: () {
-                  Navigator.pushNamed<dynamic>(context, "WeChatRecordScreen");
-                },
-                child: new Text("进入仿微信录制界面")),
-            new TextButton(
-                onPressed: () {
-                  Navigator.pushNamed<dynamic>(context, "PathProviderScreen");
-                },
-                child: new Text("进入文件路径获取界面")),
+            TextButton(
+              onPressed: () {
+                Navigator.pushNamed<dynamic>(context, "RecordScreen");
+              },
+              child: const Text("进入语音录制界面"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pushNamed<dynamic>(context, "RecordMp3Screen");
+              },
+              child: const Text("进入录制mp3模式"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pushNamed<dynamic>(context, "WeChatRecordScreen");
+              },
+              child: const Text("进入仿微信录制界面"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pushNamed<dynamic>(context, "PathProviderScreen");
+              },
+              child: const Text("进入文件路径获取界面"),
+            ),
           ],
         ),
       ),

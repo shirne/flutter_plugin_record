@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 class PathProviderScreen extends StatefulWidget {
-  PathProviderScreen({Key? key, required this.title}) : super(key: key);
+  const PathProviderScreen({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  _PathProviderScreenState createState() => _PathProviderScreenState();
+  State<PathProviderScreen> createState() => _PathProviderScreenState();
 }
 
 class _PathProviderScreenState extends State<PathProviderScreen> {
@@ -98,7 +98,7 @@ class _PathProviderScreenState extends State<PathProviderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("获取文件路径界面"),
+        title: const Text("获取文件路径界面"),
       ),
       body: Center(
         child: ListView(
@@ -106,8 +106,8 @@ class _PathProviderScreenState extends State<PathProviderScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
-                child: const Text('Get Temporary Directory'),
                 onPressed: _requestTempDirectory,
+                child: const Text('Get Temporary Directory'),
               ),
             ),
             FutureBuilder<Directory>(
@@ -117,8 +117,8 @@ class _PathProviderScreenState extends State<PathProviderScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
-                child: const Text('Get Application Documents Directory'),
                 onPressed: _requestAppDocumentsDirectory,
+                child: const Text('Get Application Documents Directory'),
               ),
             ),
             FutureBuilder<Directory>(
@@ -128,8 +128,8 @@ class _PathProviderScreenState extends State<PathProviderScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
-                child: const Text('Get Application Support Directory'),
                 onPressed: _requestAppSupportDirectory,
+                child: const Text('Get Application Support Directory'),
               ),
             ),
             FutureBuilder<Directory>(
@@ -139,8 +139,8 @@ class _PathProviderScreenState extends State<PathProviderScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
-                child: const Text('Get Application Library Directory'),
                 onPressed: _requestAppLibraryDirectory,
+                child: const Text('Get Application Library Directory'),
               ),
             ),
             FutureBuilder<Directory>(
@@ -150,10 +150,11 @@ class _PathProviderScreenState extends State<PathProviderScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
-                child: Text(
-                    '${Platform.isIOS ? "External directories are unavailable " "on iOS" : "Get External Storage Directory"}'),
                 onPressed:
                     Platform.isIOS ? null : _requestExternalStorageDirectory,
+                child: Text(Platform.isIOS
+                    ? "External directories are unavailable " "on iOS"
+                    : "Get External Storage Directory"),
               ),
             ),
             FutureBuilder<Directory?>(
@@ -164,8 +165,6 @@ class _PathProviderScreenState extends State<PathProviderScreen> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
-                  child: Text(
-                      '${Platform.isIOS ? "External directories are unavailable " "on iOS" : "Get External Storage Directories"}'),
                   onPressed: Platform.isIOS
                       ? null
                       : () {
@@ -173,6 +172,9 @@ class _PathProviderScreenState extends State<PathProviderScreen> {
                             StorageDirectory.music,
                           );
                         },
+                  child: Text(Platform.isIOS
+                      ? "External directories are unavailable " "on iOS"
+                      : "Get External Storage Directories"),
                 ),
               ),
             ]),
@@ -183,10 +185,11 @@ class _PathProviderScreenState extends State<PathProviderScreen> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
-                  child: Text(
-                      '${Platform.isIOS ? "External directories are unavailable " "on iOS" : "Get External Cache Directories"}'),
                   onPressed:
                       Platform.isIOS ? null : _requestExternalCacheDirectories,
+                  child: Text(Platform.isIOS
+                      ? "External directories are unavailable " "on iOS"
+                      : "Get External Cache Directories"),
                 ),
               ),
             ]),

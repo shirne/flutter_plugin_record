@@ -1,7 +1,6 @@
-package record.wilson.flutter.com.flutter_plugin_record_example
+package com.flutter.example.flutter_plugin_record
 
 import io.flutter.embedding.android.FlutterActivity
 
 class MainActivity: FlutterActivity() {
-
 }

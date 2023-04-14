@@ -22,6 +22,7 @@ import java.util.Locale;
 
 import record.wilson.flutter.com.flutter_plugin_record.timer.ITimerChangeCallback;
 import record.wilson.flutter.com.flutter_plugin_record.timer.TimerUtils;
+
 public final class AudioHandler extends Handler {
 
     private static final String TAG = "AudioHandler";
